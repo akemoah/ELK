@@ -16,4 +16,5 @@ galaxy_info:
     - sibedge
 
   dependencies:
+    - winmasta.docker-latest
     - winmasta.nginx
