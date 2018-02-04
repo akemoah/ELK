@@ -1,0 +1,3 @@
+---
+LOGSTASH_PORT: 5000
+DEST_DIR: /opt
