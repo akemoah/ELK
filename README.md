@@ -1,38 +1,96 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Ansible role for latest ELK stack in docker containers. UI behind nginx with basic authorization. Tested on:
+  - Ubuntu 14.04 Trusty
+  - Ubuntu 16.04 Xenial
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Installed OS:
+ - Ubuntu 14.04 Trusty
+ - Ubuntu 16.04 Xenial
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+  - LOGSTASH_PORT: 5000 # Logstash external port for beats (filebeat etc).
+  - DEST_DIR: /opt/docker-elk # ELK docker files directory.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Depends on:
+ - winmasta.docker-latest
+ - winmasta.nginx
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+To use this role:
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+  - create folder (in user $HOME folder in example below) and install role with dependencies from ansible-galaxy
+
+```bash
+cd ~/
+mkdir ELK
+cd ELK
+ansible-galaxy install winmasta.ELK --roles-path .
+```
+
+  - as soon as ansible-galaxy doesn't install role dependencies yet, you should do it manually
+
+```bash
+ansible-galaxy install -r winmasta.grafana/requirements.yml --roles-path .
+```
+
+  - create file `hosts`, containing hostname(s) or IP address(es) of host(s), where you want to deploy role
+
+```bash
+echo "ENTER HOSTNAME OR IP" > hosts
+```
+
+  - create file `ansible.cfg` in current folder
+
+```bash
+cat > ansible.cfg << EOF
+[defaults]
+remote_user = root
+host_key_checking = False
+EOF
+```
+
+  - create playbook in current folder `main.yml` with content
+
+```bash
+cat > main.yml << EOF
+---
+- hosts: all
+  gather_facts: no
+
+  pre_tasks:
+
+  - name: Install required packages
+    raw: sudo apt-get update -y && sudo apt-get -y install python-simplejson python-pip
+    changed_when: False
+
+  - setup:
+
+  roles:
+    - winmasta.docker-latest
+    - winmasta.nginx
+    - winmasta.ELK
+EOF
+```
+
+  - execute playbook `main.yml`
+
+```bash
+ansible-playbook -i hosts main.yml
+```
 
 License
 -------
 
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+MIT
