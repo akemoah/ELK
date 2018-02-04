@@ -1,5 +1,8 @@
 ---
 - hosts: localhost
-  remote_user: root
+  connection: local
+  become: true
   roles:
+    - winmasta.docker-latest
+    - winmasta.nginx
     - elk

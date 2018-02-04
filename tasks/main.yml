@@ -1,20 +1,34 @@
 ---
-- name: Clone ELK git repository
-  git:
-    repo: https://github.com/deviantony/docker-elk.git
-    dest: "{{ DEST_DIR }}"
+- name: Create destination directory
+  file:
+    name: "{{ DEST_DIR }}"
+    state: directory
+    mode: 0655
+  register: res
 
-- name: Copy kibana config
-  template:
-    src: kibana.j2
-    dest: "{{ DEST_DIR }}/docker-elk/kibana/config/kibana.yml"
+- name: Spin up ELK stack if directory "{{ DEST_DIR }}" not exists
+  block:
 
-- name: Copy docker-compose file
-  template:
-    src: docker-compose.j2
-    dest: "{{ DEST_DIR }}/docker-compose.yml"
+    - name: Clone ELK git repository
+      git:
+        repo: https://github.com/deviantony/docker-elk.git
+        dest: "{{ DEST_DIR }}"
+        clone: yes
 
-- name: Compose uo ELK stack
-  docker_service:
-    project_src: "{{ DEST_DIR }}"
-    state: present
+    - name: Copy kibana config
+      template:
+        src: kibana.j2
+        dest: "{{ DEST_DIR }}/kibana/config/kibana.yml"
+
+    - name: Copy docker-compose file
+      template:
+        src: docker-compose.j2
+        dest: "{{ DEST_DIR }}/docker-compose.yml"
+
+    - name: Compose up ELK stack
+      docker_service:
+        project_src: "{{ DEST_DIR }}"
+        state: present
+      notify: restart nginx
+
+  when: res.changed != False
