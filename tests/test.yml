@@ -5,4 +5,5 @@
   roles:
     - winmasta.docker-latest
     - winmasta.nginx
+    - winmasta.CA
     - ELK
