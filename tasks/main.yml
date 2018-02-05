@@ -20,6 +20,11 @@
         src: kibana.j2
         dest: "{{ DEST_DIR }}/kibana/config/kibana.yml"
 
+    - name: Copy logstash config
+      template:
+        src: logstash.j2
+        dest: "{{ DEST_DIR }}/logstash/pipeline/logstash.conf"
+
     - name: Copy docker-compose file
       template:
         src: docker-compose.j2

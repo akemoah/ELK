@@ -1,0 +1,20 @@
+input {
+	beats {
+		port => 5000
+    ssl => true
+    {% if USE_TLS == True %}
+    ssl_certificate_authorities => ["{{ TLS_DIR }}/{{ CA_CERT_NAME }}"]
+    ssl_certificate => "{{ TLS_DIR }}/{{ CLIENT_CERT_FILENAME }}"
+    ssl_key => "{{ TLS_DIR }}/{{ CLIENT_KEY_FILENAME }}"
+    ssl_verify_mode => "force_peer"
+    {% endif %}
+	}
+}
+
+## Add your filters / logstash plugins configuration here
+
+output {
+	elasticsearch {
+		hosts => "elasticsearch:9200"
+	}
+}
