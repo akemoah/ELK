@@ -1,7 +1,8 @@
 Role Name
 =========
 
-Ansible role for latest ELK stack in docker containers. UI behind nginx with basic authorization. Tested on:
+Ansible role for latest ELK stack in docker containers. UI behind nginx with basic authorization. ELK docker config
+will be taken from `https://github.com/deviantony/docker-elk.git` repo. Tested on:
   - Ubuntu 14.04 Trusty
   - Ubuntu 16.04 Xenial
 
