@@ -16,6 +16,7 @@ Installed OS:
 Role Variables
 --------------
 
+  - USE_TLS: True # Enables or disables using TLS for logstash
   - LOGSTASH_PORT: 5000 # Logstash external port for beats (filebeat etc).
   - DEST_DIR: /opt/docker-elk # ELK docker files directory.
 
@@ -43,7 +44,7 @@ ansible-galaxy install winmasta.ELK --roles-path .
   - as soon as ansible-galaxy doesn't install role dependencies yet, you should do it manually
 
 ```bash
-ansible-galaxy install -r winmasta.grafana/requirements.yml --roles-path .
+ansible-galaxy install -r winmasta.ELK/requirements.yml --roles-path .
 ```
 
   - create file `hosts`, containing hostname(s) or IP address(es) of host(s), where you want to deploy role
@@ -52,7 +53,7 @@ ansible-galaxy install -r winmasta.grafana/requirements.yml --roles-path .
 echo "ENTER HOSTNAME OR IP" > hosts
 ```
 
-  - create file `ansible.cfg` in current folder
+  - create file `ansible.cfg` in current folder, `remote_user` can be changed
 
 ```bash
 cat > ansible.cfg << EOF
@@ -62,7 +63,8 @@ host_key_checking = False
 EOF
 ```
 
-  - create playbook in current folder `main.yml` with content
+  - create playbook in current folder `main.yml` with content, `become: yes` may be required if `remote_user` is not
+    root
 
 ```bash
 cat > main.yml << EOF
@@ -81,6 +83,7 @@ cat > main.yml << EOF
   roles:
     - winmasta.docker-latest
     - winmasta.nginx
+    - winmasta.CA
     - winmasta.ELK
 EOF
 ```
